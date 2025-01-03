@@ -18,7 +18,7 @@ UIS.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton3 then
         Teleport(Mouse.Hit.p)
     end
-end)
+end
 
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
