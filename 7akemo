@@ -1163,11 +1163,17 @@ speedLabel.TextSize = 14.000
 
 local speed = 1
 local speedEnabled = false
+local originalSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed -- حفظ السرعة الأصلية
 
 -- Toggle Speed Function
 toggleSpeed.MouseButton1Click:Connect(function()
     speedEnabled = not speedEnabled
-    toggleSpeed.Text = speedEnabled and "Speed On" or "Speed Off"
+    if speedEnabled then
+        toggleSpeed.Text = "Speed On"
+    else
+        toggleSpeed.Text = "Speed Off"
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = originalSpeed -- إعادة السرعة الأصلية
+    end
 end)
 
 -- Increase Speed Function
@@ -1188,12 +1194,10 @@ decreaseSpeed.MouseButton1Click:Connect(function()
     end
 end)
 
--- Integrating with existing flight system
+-- Adjust Speed Function
 local function adjustSpeed()
     if speedEnabled then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 * speed
-    else
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = originalSpeed * speed
     end
 end
 
