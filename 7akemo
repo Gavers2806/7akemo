@@ -991,6 +991,7 @@ end)
 local Workspace = game:GetService("Workspace")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local Noclip = Instance.new("ScreenGui")
 local BG = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
@@ -999,9 +1000,10 @@ local StatusPF = Instance.new("TextLabel")
 local Status = Instance.new("TextLabel")
 local Plr = Players.LocalPlayer
 local Clipon = false
+local Stepped -- لتعريف متغير الاتصال
 
 Noclip.Name = "7akemo NoClip"
-Noclip.Parent = game.CoreGui
+Noclip.Parent = CoreGui
 
 BG.Name = "BG"
 BG.Parent = Noclip
@@ -1072,27 +1074,38 @@ Status.TextStrokeColor3 = Color3.new(0, 0, 0)
 Status.TextWrapped = true
 Status.TextXAlignment = Enum.TextXAlignment.Left
 
-Toggle.MouseButton1Click:connect(function()
+Toggle.MouseButton1Click:Connect(function()
 	if Status.Text == "off" then
 		Clipon = true
 		Status.Text = "on"
-		Status.TextColor3 = Color3.new(0,185,0)
-		Stepped = game:GetService("RunService").Stepped:Connect(function()
-			if not Clipon == false then
-				for a, b in pairs(Workspace:GetChildren()) do
-                if b.Name == Plr.Name then
-                for i, v in pairs(Workspace[Plr.Name]:GetChildren()) do
-                if v:IsA("BasePart") then
-                v.CanCollide = false
-                end end end end
-			else
-				Stepped:Disconnect()
+		Status.TextColor3 = Color3.new(0, 185, 0)
+
+		Stepped = RunService.Stepped:Connect(function()
+			if Clipon and Plr.Character then
+				for _, v in pairs(Plr.Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false
+					end
+				end
 			end
 		end)
 	elseif Status.Text == "on" then
 		Clipon = false
 		Status.Text = "off"
-		Status.TextColor3 = Color3.new(170,0,0)
+		Status.TextColor3 = Color3.new(170, 0, 0)
+
+		if Stepped then
+			Stepped:Disconnect()
+			Stepped = nil
+		end
+
+		if Plr.Character then
+			for _, v in pairs(Plr.Character:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = true
+				end
+			end
+		end
 	end
 end)
 
