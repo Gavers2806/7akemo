@@ -1215,3 +1215,142 @@ local function adjustSpeed()
 end
 
 game:GetService("RunService").RenderStepped:Connect(adjustSpeed)
+
+
+
+local Workspace = game:GetService("Workspace")
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local invisGui = Instance.new("ScreenGui")
+local BG = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Toggle = Instance.new("TextButton")
+local StatusPF = Instance.new("TextLabel")
+local Status = Instance.new("TextLabel")
+local Plr = Players.LocalPlayer
+local invis_on = false
+
+-- إعداد واجهة المستخدم
+invisGui.Name = "7akemo INV"
+invisGui.Parent = CoreGui
+
+BG.Name = "BG"
+BG.Parent = invisGui
+BG.BackgroundColor3 = Color3.new(0.098, 0.098, 0.098)
+BG.BorderColor3 = Color3.new(0.058, 0.058, 0.058)
+BG.BorderSizePixel = 2
+BG.Position = UDim2.new(0.15, 0, 0.82, 0)
+BG.Size = UDim2.new(0, 210, 0, 127)
+BG.Active = true
+BG.Draggable = true
+
+Title.Name = "Title"
+Title.Parent = BG
+Title.BackgroundColor3 = Color3.new(0, 0, 0)
+Title.BorderColor3 = Color3.new(0, 0, 0)
+Title.BorderSizePixel = 2
+Title.Size = UDim2.new(0, 210, 0, 33)
+Title.Font = Enum.Font.Highway
+Title.Text = "7akemo INV"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.FontSize = Enum.FontSize.Size32
+Title.TextSize = 30
+Title.TextStrokeColor3 = Color3.new(0, 0, 0)
+Title.TextStrokeTransparency = 0
+
+Toggle.Parent = BG
+Toggle.BackgroundColor3 = Color3.new(0, 0, 0)
+Toggle.BorderColor3 = Color3.new(0, 0, 0)
+Toggle.BorderSizePixel = 2
+Toggle.Position = UDim2.new(0.15, 0, 0.37, 0)
+Toggle.Size = UDim2.new(0, 146, 0, 36)
+Toggle.Font = Enum.Font.Highway
+Toggle.FontSize = Enum.FontSize.Size28
+Toggle.Text = "Toggle"
+Toggle.TextColor3 = Color3.new(1, 1, 1)
+Toggle.TextSize = 25
+Toggle.TextStrokeColor3 = Color3.new(0, 0, 0)
+Toggle.TextStrokeTransparency = 0
+
+StatusPF.Name = "StatusPF"
+StatusPF.Parent = BG
+StatusPF.BackgroundColor3 = Color3.new(1, 1, 1)
+StatusPF.BackgroundTransparency = 1
+StatusPF.Position = UDim2.new(0.31, 0, 0.71, 0)
+StatusPF.Size = UDim2.new(0, 56, 0, 20)
+StatusPF.Font = Enum.Font.Highway
+StatusPF.FontSize = Enum.FontSize.Size24
+StatusPF.Text = "Status:"
+StatusPF.TextColor3 = Color3.new(1, 1, 1)
+StatusPF.TextSize = 20
+StatusPF.TextStrokeColor3 = Color3.new(0.33, 0.33, 0.33)
+StatusPF.TextStrokeTransparency = 0
+StatusPF.TextWrapped = true
+
+Status.Name = "Status"
+Status.Parent = BG
+Status.BackgroundColor3 = Color3.new(1, 1, 1)
+Status.BackgroundTransparency = 1
+Status.Position = UDim2.new(0.58, 0, 0.71, 0)
+Status.Size = UDim2.new(0, 56, 0, 20)
+Status.Font = Enum.Font.Highway
+Status.FontSize = Enum.FontSize.Size14
+Status.Text = "off"
+Status.TextColor3 = Color3.new(0.67, 0, 0)
+Status.TextScaled = true
+Status.TextSize = 14
+Status.TextStrokeColor3 = Color3.new(0, 0, 0)
+Status.TextWrapped = true
+Status.TextXAlignment = Enum.TextXAlignment.Left
+
+-- وظيفة لتغيير شفافية الشخصية
+function setTransparency(character, transparency)
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = transparency
+        elseif part:IsA("Decal") then
+            part.Transparency = transparency
+        end
+    end
+end
+
+-- وظيفة لتشغيل أو إيقاف الاختفاء
+function toggleInvisibility()
+    local character = Plr.Character
+    if not character then return end
+
+    invis_on = not invis_on
+    if invis_on then
+        local savedpos = character.HumanoidRootPart.CFrame
+        wait()
+        character:MoveTo(Vector3.new(-25.95, 84, 3537.55))
+        wait(0.15)
+        local Seat = Instance.new("Seat", Workspace)
+        Seat.Anchored = false
+        Seat.CanCollide = false
+        Seat.Name = "invischair"
+        Seat.Transparency = 1
+        Seat.Position = Vector3.new(-25.95, 84, 3537.55)
+        local Weld = Instance.new("Weld", Seat)
+        Weld.Part0 = Seat
+        Weld.Part1 = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+        wait()
+        Seat.CFrame = savedpos
+        setTransparency(character, 0.5)
+        Status.Text = "on"
+        Status.TextColor3 = Color3.new(0, 0.73, 0)
+    else
+        local chair = Workspace:FindFirstChild("invischair")
+        if chair then
+            chair:Destroy()
+        end
+        setTransparency(character, 0)
+        Status.Text = "off"
+        Status.TextColor3 = Color3.new(0.67, 0, 0)
+    end
+end
+
+-- توصيل الزر بوظيفة الاختفاء
+Toggle.MouseButton1Click:Connect(toggleInvisibility)
